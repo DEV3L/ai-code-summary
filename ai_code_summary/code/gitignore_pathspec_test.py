@@ -22,10 +22,10 @@ def tmp_no_gitignore_files(tmp_path: Path):
 
 
 def test_find_gitignore_files(tmp_gitignore_files: Path):
-    gitignore_files = _find_gitignore_files(tmp_gitignore_files)
-    assert len(gitignore_files) == 2
+    gitignore_files = _find_gitignore_files(tmp_gitignore_files, ["dir2"])
+    assert len(gitignore_files) == 1
     assert (tmp_gitignore_files / "dir1" / ".gitignore") in gitignore_files
-    assert (tmp_gitignore_files / "dir2" / ".gitignore") in gitignore_files
+    assert (tmp_gitignore_files / "dir2" / ".gitignore") not in gitignore_files
 
 
 def test_load_gitignore_patterns(tmp_gitignore_files: Path):

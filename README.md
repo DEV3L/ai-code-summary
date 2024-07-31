@@ -39,7 +39,7 @@ The following environment variables can be configured in the `.env` file:
 
 - `OPENAI_MODEL`: The model to use
   - Default: `gpt-4o`
-- `SUMMARY_PROMPT`: The prompt used to summarize code files 
+- `SUMMARY_PROMPT`: The prompt used to summarize code files
   - Default: `You are code summary expert. You summarize code in a short way that is easy to understand.`
 
 ## Testing
@@ -64,4 +64,11 @@ Command + Shift + P => Coverage Gutters: Watch
 
 ## Example
 
-TBD
+```
+from ai_code_summary.markdown.export import create_markdown_from_code
+
+if __name__ == "__main__":
+    create_markdown_from_code(".")
+```
+
+Example output as a markdown file - [ai-code-summary.md](ai-code-summary.md)
