@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-code-summary"
+dynamic = ["version"]
+description = "This project automates the process of aggregating code files from a directory into a single markdown file, ready for use in an OpenAI Assistant or any RAG model. It intelligently skips files specified in the .gitignore and leverages ChatGPT to generate concise summaries for each code file, ensuring that the final markdown file is both comprehensive and easy to understand."
+license = { file = "LICENSE" }
+readme = "README.md"
+authors = [{ name = "Justin Beall", email = "jus.beall@gmail.com" }]
+requires-python = ">=3.11"
+dependencies = ["loguru", "openai", "pathspec", "python-dotenv", "twine"]
+keywords = [
+    "openai",
+    "code summary",
+    "AI",
+    "automation",
+    "python",
+    "API",
+    "artificial intelligence",
+    "data science",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+repository = "https://github.com/DEV3L/ai-code-summary"
+
+[tool.hatch.version]
+path = "setup.cfg"
+pattern = "version = (?P<version>\\S+)"
+
+[tool.hatch.build.targets.sdist]
+include = ["/ai_code_summary"]
+artifact = { name = "ai-code-summary" }
+
+[tool.hatch.build.targets.wheel]
+packages = ["ai_code_summary"]
+artifact = { name = "ai-code-summary" }
+
+[tool.hatch.envs.default]
+type = "virtual"
+path = ".venv"
+dependencies = ["pyright", "pytest", "pytest-cov"]
+
+[tool.hatch.envs.default.scripts]
+e2e = "python run_end_to_end.py"
+test = "pytest --cache-clear --cov --cov-report lcov --cov-report term"
+publish = "rm -rf bin && rm -rf dist && hatch build && twine upload dist/*"
+
+[tool.hatch.envs.hatch-static-analysis]
+config-path = "ruff_defaults.toml"
+
+[tool.ruff]
+extend = "ruff_defaults.toml"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"

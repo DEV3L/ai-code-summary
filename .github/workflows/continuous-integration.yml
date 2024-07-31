@@ -1,0 +1,23 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  tests:
+    name: "Tests"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          python -m pip install hatch
+          hatch env create
+      - name: Unit tests
+        run: |
+          hatch run test
