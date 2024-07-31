@@ -9,8 +9,10 @@ from ai_code_summary.ai.summary import summarize_content
 from ai_code_summary.code.gitignore_pathspec import load_gitignore_patterns
 from ai_code_summary.files.file_manager import clear_tmp_folder, get_code_files, read_file, write_files_to_tmp_directory
 
+_EXCLUDE_GITIGNORE_DIRS = [".venv", ".pytest_cache", ".ruff_cache"]
 
-def create_markdown_from_code(directory: str) -> None:
+
+def create_markdown_from_code(directory: str, exclude_gitignore_dirs: list[str] = _EXCLUDE_GITIGNORE_DIRS) -> None:
     """
     Creates a markdown file summarizing the code in the given directory.
 
@@ -31,7 +33,7 @@ def create_markdown_from_code(directory: str) -> None:
     output_temp_code_dir.mkdir(parents=True, exist_ok=True)
 
     # Load gitignore patterns to exclude certain files
-    spec = load_gitignore_patterns(directory)
+    spec = load_gitignore_patterns(directory, exclude_gitignore_dirs)
     base_dir_name = base_dir.name if base_dir.name else os.path.basename(os.getcwd())
     output_markdown_file_name = output_temp_dir / f"{base_dir_name}.md"
 

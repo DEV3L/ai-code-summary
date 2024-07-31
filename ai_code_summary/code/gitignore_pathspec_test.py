@@ -29,7 +29,7 @@ def test_find_gitignore_files(tmp_gitignore_files: Path):
 
 
 def test_load_gitignore_patterns(tmp_gitignore_files: Path):
-    pathspec = load_gitignore_patterns(tmp_gitignore_files)
+    pathspec = load_gitignore_patterns(tmp_gitignore_files, [])
     assert pathspec.match_file("test.pyc")
     assert pathspec.match_file("__pycache__/")
     assert pathspec.match_file("test.log")
@@ -37,6 +37,6 @@ def test_load_gitignore_patterns(tmp_gitignore_files: Path):
 
 
 def test_load_gitignore_patterns_no_gitignore_files(tmp_no_gitignore_files: Path):
-    pathspec = load_gitignore_patterns(tmp_no_gitignore_files)
+    pathspec = load_gitignore_patterns(tmp_no_gitignore_files, [])
 
     assert len(pathspec.patterns) == 0

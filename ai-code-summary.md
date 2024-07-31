@@ -4,20 +4,25 @@
 
 ### Summary
 
-The provided code is a configuration file for a Python project named "ai-code-summary". This project aims to automate the aggregation of code files into a single markdown file, using OpenAI's ChatGPT to generate summaries. Key points include:
+This is a Python project configuration file (`pyproject.toml`) for a project named "ai-code-summary." Here's a summary:
 
-- **Build System**: Uses `hatchling` for building.
-- **Project Metadata**:
-  - **Name**: `ai-code-summary`
-  - **Description**: Automates code file aggregation and summarization.
-  - **Authors**: Justin Beall.
-  - **Dependencies**: Includes `loguru`, `openai`, `pathspec`, `python-dotenv`, and `twine`.
-  - **Keywords and Classifiers**: Indicate it's for developers and related to AI, Python, and automation.
-- **Versioning and Packaging**: Managed by Hatch, with specific configurations for source distribution and wheel packages.
-- **Virtual Environment**: A default virtual environment with dependencies and scripts for testing, end-to-end runs, and publishing.
-- **Static Analysis**: Configured using `ruff`, extending `ruff_defaults.toml`.
+1. **Build System**: Uses `hatchling` as the build backend.
+2. **Project Info**:
+   - **Name**: ai-code-summary
+   - **Description**: Automates the aggregation of code files into a markdown file, skipping files in `.gitignore` and using ChatGPT for summaries.
+   - **Author**: Justin Beall
+   - **License**: MIT License
+   - **Python Requirement**: >=3.11
+   - **Dependencies**: Includes `loguru`, `openai`, `pathspec`, `python-dotenv`, `twine`
+   - **Keywords**: openai, code summary, AI, automation, python, API, artificial intelligence, data science
+3. **Classifiers**: Specifies development status, intended audience, license, and compatible Python versions.
+4. **URLs**: Provides a GitHub repository link.
+5. **Versioning**: Manages versions using `hatch` with setup in `setup.cfg`.
+6. **Build Targets**: Defines source distribution (sdist) and wheel targets.
+7. **Virtual Environment**: Configures a default virtual environment with specific dependencies and scripts for testing, building, and publishing.
+8. **Static Analysis**: Sets up `ruff` for code linting with configurations to ban relative imports.
 
-Repository link: `https://github.com/DEV3L/ai-code-summary`.
+This setup aims to streamline development and distribution, emphasizing automation and integration with AI tools.
 
 ```toml
 [build-system]
@@ -88,16 +93,12 @@ extend = "ruff_defaults.toml"
 ban-relative-imports = "parents"
 
 ```
+
 ## continuous-integration.yml
 
 ### Summary
 
-This GitHub Actions workflow named "Continuous Integration" is triggered on any push to any branch. It runs a job named "Tests" on the latest Ubuntu environment, performing several steps:
-
-1. Checkout the repository code.
-2. Set up Python using version 3.x.
-3. Install dependencies with Hatch and create a virtual environment.
-4. Execute unit tests using Hatch.
+This GitHub Actions workflow named "Continuous Integration" triggers on any branch push. It runs a job called "Tests" on the latest Ubuntu version, performs a series of steps including checking out the code, setting up Python 3.x, installing dependencies using the Hatch tool, and executing unit tests.
 
 ```yml
 name: Continuous Integration
@@ -123,24 +124,21 @@ jobs:
       - name: Unit tests
         run: |
           hatch run test
-
 ```
+
 ## gitignore_pathspec_test.py
 
 ### Summary
 
-This code defines tests using `pytest` to verify functions that handle `.gitignore` files. Here's a summary:
+The code is a set of tests for functions related to handling `.gitignore` files. It uses the `pytest` framework along with the `pathlib` library to create temporary directory structures.
 
-1. **Fixtures**:
-   - `tmp_gitignore_files`: Creates a temporary directory with two subdirectories, each containing a `.gitignore` file with specific patterns.
-   - `tmp_no_gitignore_files`: Creates a temporary directory with one subdirectory but no `.gitignore` files.
+Key points:
 
-2. **Tests**:
-   - `test_find_gitignore_files`: Checks that the `_find_gitignore_files` function identifies `.gitignore` files correctly, ignoring specified directories.
-   - `test_load_gitignore_patterns`: Validates that `load_gitignore_patterns` correctly loads and matches patterns from `.gitignore` files.
-   - `test_load_gitignore_patterns_no_gitignore_files`: Ensures that `load_gitignore_patterns` returns no patterns when there are no `.gitignore` files.
-
-
+- Two fixtures create temporary directories: one with `.gitignore` files (`tmp_gitignore_files`), and one without (`tmp_no_gitignore_files`).
+- Three tests:
+  - `test_find_gitignore_files` ensures `_find_gitignore_files` correctly identifies `.gitignore` files in specified directories.
+  - `test_load_gitignore_patterns` checks if `load_gitignore_patterns` correctly identifies files based on `.gitignore` patterns.
+  - `test_load_gitignore_patterns_no_gitignore_files` verifies that `load_gitignore_patterns` returns no patterns when no `.gitignore` files exist.
 
 ```py
 from pathlib import Path
@@ -174,7 +172,7 @@ def test_find_gitignore_files(tmp_gitignore_files: Path):
 
 
 def test_load_gitignore_patterns(tmp_gitignore_files: Path):
-    pathspec = load_gitignore_patterns(tmp_gitignore_files)
+    pathspec = load_gitignore_patterns(tmp_gitignore_files, [])
     assert pathspec.match_file("test.pyc")
     assert pathspec.match_file("__pycache__/")
     assert pathspec.match_file("test.log")
@@ -182,32 +180,38 @@ def test_load_gitignore_patterns(tmp_gitignore_files: Path):
 
 
 def test_load_gitignore_patterns_no_gitignore_files(tmp_no_gitignore_files: Path):
-    pathspec = load_gitignore_patterns(tmp_no_gitignore_files)
+    pathspec = load_gitignore_patterns(tmp_no_gitignore_files, [])
 
     assert len(pathspec.patterns) == 0
 
 ```
+
 ## export.py
 
 ### Summary
 
-The provided code is a Python script that generates a markdown summary of code files from a specified directory. Here's a concise summary:
+This code creates a markdown summary of code files in a specified directory, excluding certain directories defined by `.gitignore` patterns and some predefined folders. The key functions are:
 
-1. **Setup and Imports**: It imports necessary modules and functions.
-2. **Main Function (`create_markdown_from_code`)**:
-   - Initializes the process and sets paths.
-   - Clears a temporary output directory and creates necessary subdirectories.
-   - Loads `.gitignore` patterns to filter files.
-   - Copies relevant code files into a temporary directory.
-   - Reads content from these code files.
-   - Calls a helper function to generate a markdown file with content summaries.
-3. **Helper Functions**:
-   - `_write_markdown`: Writes the overall structure to the markdown file, then processes individual files.
-   - `_write_markdown_file`: Summarizes content and formats each file's details into markdown.
+1. **`create_markdown_from_code(directory: str, exclude_gitignore_dirs: list[str]) -> None`**:
 
-The script organizes and summarizes code files into a readable markdown document.
+   - Main function to create a markdown summary.
+   - Clears temporary directories and creates necessary folders.
+   - Loads `.gitignore` patterns to exclude files.
+   - Writes code files to a temporary directory.
+   - Reads and processes code files, and writes their summaries to a markdown file.
 
-```py
+2. **`_write_markdown(base_dir: Path, base_dir_name: str, output_markdown_file_name: Path, file_contents: list) -> None`**:
+
+   - Writes the markdown summary for all code files.
+   - Calls `_write_markdown_file` for each file that has content.
+
+3. **`_write_markdown_file(file_info: Tuple[Path, str], base_dir: Path, output_file_name: Path) -> None`**:
+   - Appends a summary for a single code file to the markdown file.
+   - Uses an external function `summarize_content` to generate the summary.
+
+Supporting functions handle file managing tasks like clearing temporary folders, reading files, etc.
+
+````py
 import os
 from pathlib import Path
 from typing import Tuple
@@ -219,8 +223,19 @@ from ai_code_summary.ai.summary import summarize_content
 from ai_code_summary.code.gitignore_pathspec import load_gitignore_patterns
 from ai_code_summary.files.file_manager import clear_tmp_folder, get_code_files, read_file, write_files_to_tmp_directory
 
+_EXCLUDE_GITIGNORE_DIRS = [".venv", ".pytest_cache", ".ruff_cache"]
 
-def create_markdown_from_code(directory: str) -> None:
+
+def create_markdown_from_code(directory: str, exclude_gitignore_dirs: list[str] = _EXCLUDE_GITIGNORE_DIRS) -> None:
+    """
+    Creates a markdown file summarizing the code in the given directory.
+
+    Args:
+        directory (str): The directory containing the code to summarize.
+
+    Returns:
+        None
+    """
     logger.info("Script started")
 
     base_dir = Path(directory)
@@ -231,7 +246,8 @@ def create_markdown_from_code(directory: str) -> None:
     output_temp_code_dir = output_temp_dir / "code"
     output_temp_code_dir.mkdir(parents=True, exist_ok=True)
 
-    spec = load_gitignore_patterns(directory)
+    # Load gitignore patterns to exclude certain files
+    spec = load_gitignore_patterns(directory, exclude_gitignore_dirs)
     base_dir_name = base_dir.name if base_dir.name else os.path.basename(os.getcwd())
     output_markdown_file_name = output_temp_dir / f"{base_dir_name}.md"
 
@@ -244,18 +260,41 @@ def create_markdown_from_code(directory: str) -> None:
     logger.info("Script finished")
 
 
-def _write_markdown(base_dir, base_dir_name, output_markdown_file_name, file_contents):
+def _write_markdown(base_dir: Path, base_dir_name: str, output_markdown_file_name: Path, file_contents: list) -> None:
+    """
+    Writes the markdown summary for the given code files.
+
+    Args:
+        base_dir (Path): The base directory of the code files.
+        base_dir_name (str): The name of the base directory.
+        output_markdown_file_name (Path): The path to the output markdown file.
+        file_contents (list): A list of tuples containing file paths and their contents.
+
+    Returns:
+        None
+    """
     with open(output_markdown_file_name, "w") as f:
         f.write(f"# {base_dir_name}\n\n")
     [
         _write_markdown_file(file_info, base_dir, output_markdown_file_name)
         for file_info in file_contents
-        if file_info[1]
+        if file_info[1]  # Only process files with content
     ]
     logger.info(f"Wrote markdown summary to {output_markdown_file_name}")
 
 
 def _write_markdown_file(file_info: Tuple[Path, str], base_dir: Path, output_file_name: Path) -> None:
+    """
+    Appends a markdown summary for a single file to the output markdown file.
+
+    Args:
+        file_info (Tuple[Path, str]): A tuple containing the file path and its content.
+        base_dir (Path): The base directory of the code files.
+        output_file_name (Path): The path to the output markdown file.
+
+    Returns:
+        None
+    """
     file_path, content = file_info
     summary = summarize_content(content)
     relative_path = file_path.relative_to(base_dir)
@@ -267,12 +306,16 @@ def _write_markdown_file(file_info: Tuple[Path, str], base_dir: Path, output_fil
         f.write("\n```\n")
     logger.info(f"Appended summary for {file_path} to {output_file_name}")
 
-```
+````
+
 ## summary.py
 
 ### Summary
 
-This code provides a function to summarize given text using the OpenAI API. It initializes the OpenAI client with a specified API key, sends a request to generate a summary, and logs how long the API call took. The summarized content is then returned.
+This code defines a module for summarizing text using the OpenAI API. It contains two main functions:
+
+1. `_get_open_ai_client()`: Initializes and returns an OpenAI client using an API key.
+2. `summarize_content(content: str)`: Summarizes given content by making an API call to OpenAI, logs the time taken for the API call, and returns the summarized content.
 
 ```py
 import time
@@ -316,22 +359,27 @@ def summarize_content(content: str) -> str:
     return completion.choices[0].message.content  # Return the summarized content
 
 ```
+
 ## export_test.py
 
 ### Summary
 
-This code contains unit tests for a module that generates markdown documentation from Python code files. Key points include:
+This Python script uses `pytest` for testing and `unittest.mock` for mocking dependencies. It involves the functionality of exporting code summaries to Markdown files. Here's a brief summary:
 
-1. **Fixtures**:
-   - `setup_test_directory`: Sets up a temporary directory with Python files for testing.
-   - `mock_file_contents`: Provides mock Python file paths and content for testing.
+1. **Setup for Testing:**
 
-2. **Test Cases**:
-   - `test_create_markdown_from_code`: Tests `create_markdown_from_code` function using various mocks for dependent functions (like file reading and writing).
-   - `test_write_markdown`: Tests `_write_markdown` function to ensure it writes content correctly using a mock file handler.
-   - `test_write_markdown_file`: Tests `_write_markdown_file` function to validate its behavior when writing individual file summaries to a markdown file, using mock implementations of file operations and content summarization.
+   - **Fixtures:**
+     - `setup_test_directory`: Creates a temporary testing directory with two Python files.
+     - `mock_file_contents`: Mock content for files used in tests.
 
-```py
+2. **Tests:**
+   - `test_create_markdown_from_code`: Mocks several functions (`clear_tmp_folder`, `write_files_to_tmp_directory`, `get_code_files`, `read_file`, `_write_markdown`) to test `create_markdown_from_code`, ensuring it reads files and writes markdown correctly.
+   - `test_write_markdown`: Tests the `_write_markdown` function by checking if it writes to a markdown file correctly, using mocked file content.
+   - `test_write_markdown_file`: Verifies `_write_markdown_file` to ensure it formats and writes file details to markdown correctly, mocking file operations and content summarization.
+
+These tests validate that the functions handle file operations and correctly generate Markdown summaries from given code files.
+
+````py
 import shutil
 from pathlib import Path
 from unittest.mock import mock_open, patch
@@ -410,12 +458,13 @@ def test_write_markdown_file(mock_file_contents):
             handle.write.assert_any_call(file_info[1])
             handle.write.assert_any_call("\n```\n")
 
-```
+````
+
 ## env_variables.py
 
 ### Summary
 
-The code loads environment variables using the `dotenv` library. It retrieves `OPENAI_API_KEY` and `OPENAI_MODEL` from the environment, with default values provided if they are missing. It also sets a default prompt for summarizing code, called `SUMMARY_PROMPT`.
+The code loads environment variables from a `.env` file using the `dotenv` library. It then retrieves and sets default values for `OPENAI_API_KEY`, `OPENAI_MODEL`, and `SUMMARY_PROMPT`.
 
 ```py
 import os
@@ -432,17 +481,18 @@ SUMMARY_PROMPT = os.getenv(
 )
 
 ```
+
 ## ruff_defaults.toml
 
 ### Summary
 
-This configuration file sets up formatting and linting rules:
+This configuration file sets coding standards:
 
-1. Sets the maximum line length to 120 characters.
-2. Formats docstring code blocks and limits their line length to 80 characters.
-3. Bans all relative imports using flake8-tidy-imports.
-4. Configures isort to recognize "src" as a first-party package.
-5. Adjusts flake8-pytest-style rules to not require parentheses for fixtures and marks.
+- Maximum line length is 120 characters.
+- Formats docstrings to include code and limits docstring code lines to 80 characters.
+- Bans all relative imports.
+- Identifies the "src" directory as first-party for import sorting.
+- Specifies no parentheses for pytest fixtures and marks.
 
 ```toml
 line-length = 120
@@ -461,24 +511,16 @@ known-first-party = ["src"]
 fixture-parentheses = false
 mark-parentheses = false
 ```
+
 ## gitignore_pathspec.py
 
 ### Summary
 
-This Python code provides functionality to load `.gitignore` patterns from a specified directory and its subdirectories, while excluding certain directories. It consists of three main parts:
+This code provides functionality to locate and read `.gitignore` files within a given directory, excluding specified subdirectories, and then aggregates all patterns from these files into a `pathspec.PathSpec` object. The key components are:
 
-1. **_find_gitignore_files function**:
-   - Recursively searches a given directory for `.gitignore` files, while excluding specified directories.
-   - Returns a list of paths to the found `.gitignore` files.
-
-2. **_read_patterns_from_file function**:
-   - Reads and returns the patterns from a specified `.gitignore` file.
-
-3. **load_gitignore_patterns function**:
-   - Uses the above two functions to find and combine all patterns from the found `.gitignore` files.
-   - Logs the process and returns a `PathSpec` object containing all the loaded patterns.
-
-Default directories to exclude (`.venv` and `.pytest_cache`) are specified in `_IGNORE_DIRS`. The `loguru` library is used for logging, and `pathspec` is used to handle the pattern matching.
+1. **\_find_gitignore_files**: Recursively searches for `.gitignore` files in a given directory, excluding specified directories.
+2. **\_read_patterns_from_file**: Reads and returns patterns from a specified `.gitignore` file.
+3. **load_gitignore_patterns**: Combines functionalities of the two helper functions to load all `.gitignore` patterns from the directory and returns them as a `pathspec.PathSpec` object. Logs the process of loading the patterns.
 
 ```py
 from functools import reduce
@@ -487,8 +529,6 @@ from typing import List
 
 import pathspec
 from loguru import logger
-
-_IGNORE_DIRS = [".venv", ".pytest_cache"]
 
 
 def _find_gitignore_files(directory: str, exclude_dirs: List[str]) -> List[Path]:
@@ -503,12 +543,11 @@ def _find_gitignore_files(directory: str, exclude_dirs: List[str]) -> List[Path]
         List[Path]: A list of paths to .gitignore files.
     """
     exclude_dirs = set(exclude_dirs or [])
-    gitignore_files = []
-    for path in Path(directory).rglob(".gitignore"):
-        # Exclude paths that contain any of the excluded directories
-        if not any(excluded in path.parts for excluded in exclude_dirs):
-            gitignore_files.append(path)
-    return gitignore_files
+    return [
+        path
+        for path in Path(directory).rglob(".gitignore")
+        if not any(excluded in path.parts for excluded in exclude_dirs)
+    ]
 
 
 def _read_patterns_from_file(file_path: Path) -> List[str]:
@@ -525,7 +564,7 @@ def _read_patterns_from_file(file_path: Path) -> List[str]:
         return f.read().splitlines()
 
 
-def load_gitignore_patterns(directory: str, exclude_dirs: List[str] | None = _IGNORE_DIRS) -> pathspec.PathSpec:
+def load_gitignore_patterns(directory: str, exclude_dirs: List[str]) -> pathspec.PathSpec:
     """
     Load .gitignore patterns from a directory, excluding specified directories.
 
@@ -551,11 +590,18 @@ def load_gitignore_patterns(directory: str, exclude_dirs: List[str] | None = _IG
     return pathspec.PathSpec.from_lines("gitwildmatch", all_patterns)
 
 ```
+
 ## summary_test.py
 
 ### Summary
 
-This code defines a unit test for the `summarize_content` function using the `unittest.mock` library to mock the `OpenAI` class. It ensures that the function correctly interacts with the OpenAI API to generate a summary for a given code snippet. The test checks that the summary returned is "This is a summary" and verifies that the API call is made with the correct parameters.
+This code defines a test function, `test_summarize_content`, that uses the `unittest.mock` library to mock the behavior of an OpenAI client. It verifies that the `summarize_content` function correctly generates a summary for a given piece of code.
+
+1. `@patch("ai_code_summary.ai.summary.OpenAI")` mocks the OpenAI client.
+2. Inside the test, a `MagicMock` client is created to simulate the OpenAI response.
+3. The mock OpenAI client returns a pre-defined summary: "This is a summary."
+4. The test checks that `summarize_content("def example_function(): pass")` returns this summary.
+5. Finally, it confirms that the OpenAI client was called correctly with the expected parameters.
 
 ```py
 from unittest.mock import MagicMock, patch
@@ -587,36 +633,21 @@ def test_summarize_content(mock_get_open_ai):
     )
 
 ```
+
 ## file_manager.py
 
 ### Summary
 
-The provided code performs several operations involving file handling and directory management, primarily focused on code files. Here's a brief summary:
+This code provides utilities for handling code files in a specified directory. It can filter code files, read their contents, and write them to a temporary directory while preserving the directory structure. The main components are:
 
-1. **Imports and Constants:**
-   - Imports necessary modules (`os`, `shutil`, `pathlib`, `pathspec`, `logger`).
-   - Defines a set of recognized code file extensions (`_CODE_EXTENSIONS`).
+1. **File Reading (`read_file`)**: Reads the content of a given file.
+2. **Temporary Directory Management (`clear_tmp_folder`)**: Clears and recreates a temporary directory.
+3. **Code File Retrieval (`get_code_files`)**: Finds code files in a directory based on specific file extensions and a pathspec filter.
+4. **File Type Check (`_is_code_file`)**: Checks if a file is a code file by its extension or name.
+5. **Writing Files to Temp Directory (`write_files_to_tmp_directory`)**: Copies and writes code files to a temporary directory, preserving the original structure.
+6. **File Writing (`_write_file`)**: Writes file content to an output directory.
 
-2. **Functions:**
-   - **`read_file(file_path: Path) -> Tuple[Path, str]`:**
-     Reads and returns the content of a file as a string along with its path.
-
-   - **`clear_tmp_folder(tmp_dir: Path) -> None`**:
-     Clears and recreates a temporary directory.
-
-   - **`get_code_files(directory: str, spec: pathspec.PathSpec) -> List[Path]`**:
-     Retrieves a list of code files from a specified directory, excluding those matching a given pathspec.
-
-   - **`_is_code_file(file: Path) -> bool`**:
-     Checks if a file is considered a code file based on its extension or name.
-
-   - **`write_files_to_tmp_directory(directory: str, spec: List[str], base_dir: Path, output_temp_code_dir: Path) -> None`**:
-     Writes code files from a directory to a temporary directory while preserving the directory structure.
-
-   - **`_write_file(file_info: Tuple[Path, str], base_dir: Path, output_dir: Path) -> None`**:
-     Writes file content to a specified output directory, maintaining the original directory structure.
-
-The code manages code files, ensuring only relevant files are processed and written to a temporary directory, maintaining structure and logging operations.
+Logging is used extensively for tracking operations and any errors that occur.
 
 ```py
 import os
@@ -753,22 +784,26 @@ def _write_file(file_info: Tuple[Path, str], base_dir: Path, output_dir: Path) -
     logger.info(f"Wrote file {output_file}")
 
 ```
+
 ## file_manager_test.py
 
 ### Summary
 
-This code is a test suite for a file management module using the pytest framework. It tests several functions related to file operations, such as reading files, clearing a temporary directory, determining code files based on patterns, and writing files to a temporary directory.
+The provided code conducts unit tests for file management functionalities from the `ai_code_summary.files.file_manager` module. Here's a brief summary:
 
-Here's a summary of each test:
+1. **Setup Fixture**:
 
-1. **`test_read_file_success`**: Verifies that the `read_file` function correctly reads a file with known content.
-2. **`test_read_file_nonexistent`**: Checks that `read_file` returns an empty string for a nonexistent file.
-3. **`test_clear_tmp_folder`**: Ensures that `clear_tmp_folder` deletes all contents of a given directory but keeps the directory itself.
-4. **`test_get_code_files`**: Tests the `get_code_files` function to confirm it correctly filters files based on a given pattern, using mocked directory structure traversal.
-5. **`test_write_files_to_tmp_directory`**: Verifies that `write_files_to_tmp_directory` retrieves, reads, and writes files correctly by using mock functions.
-6. **`test_write_file`**: Confirms that the `_write_file` function properly writes content to a specified output directory.
+   - `tmp_dir`: Creates a temporary directory for the tests.
 
-This suite ensures the reliability of the file management functionalities in the module `ai_code_summary.files.file_manager`.
+2. **Tests**:
+   - `test_read_file_success`: Verifies successful reading of an existing file.
+   - `test_read_file_nonexistent`: Ensures reading a nonexistent file returns an empty string.
+   - `test_clear_tmp_folder`: Validates that the `clear_tmp_folder` function clears the given temporary directory.
+   - `test_get_code_files`: Checks `get_code_files` to fetch code files excluding ignored patterns, using a mock for `os.walk` to simulate directory structure.
+   - `test_write_files_to_tmp_directory`: Uses mock objects to test `write_files_to_tmp_directory`, ensuring correct file reading and writing behaviors.
+   - `test_write_file`: Tests the `_write_file` function to ensure it writes a file from the base directory to an output directory correctly.
+
+These tests validate critical file handling functions by creating temporary files, mocking behaviors, and asserting expected outcomes.
 
 ```py
 from pathlib import Path
@@ -883,11 +918,12 @@ def test_write_file(tmp_path: Path):
     assert output_file.read_text() == test_content
 
 ```
+
 ## .env.default
 
 ### Summary
 
-This code sets up environment variables for an OpenAI API key and model, and defines a prompt instructing an AI to summarize code simply and clearly.
+This code snippet sets up environment variables for the OpenAI API key and model, and defines a project variable with a prompt for summarizing code in a simple and clear manner.
 
 ```default
 # OpenAI
@@ -898,11 +934,12 @@ OPENAI_MODEL=${OPENAI_MODEL}
 SUMMARY_PROMPT="You are code summary expert. You summarize code in a short way that is easy to understand."
 
 ```
+
 ## run_end_to_end.py
 
 ### Summary
 
-This code imports a function, `create_markdown_from_code`, from a module and calls this function to generate markdown documentation for the code in the current directory when the script is executed directly.
+The code imports the `create_markdown_from_code` function from the `ai_code_summary.markdown.export` module and then calls this function with the current directory (`"."`) as the argument if the script is run as the main module. This effectively generates a markdown summary of the code files in the current directory.
 
 ```py
 from ai_code_summary.markdown.export import create_markdown_from_code

@@ -39,11 +39,12 @@ path = "setup.cfg"
 pattern = "version = (?P<version>\\S+)"
 
 [tool.hatch.build.targets.sdist]
-include = ["/ai_code_summary"]
+include = ["/ai_code_summary", "ai-code-summary.md"]
 artifact = { name = "ai-code-summary" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["ai_code_summary"]
+include = ["ai-code-summary.md"]
 artifact = { name = "ai-code-summary" }
 
 [tool.hatch.envs.default]

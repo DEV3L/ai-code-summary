@@ -5,8 +5,6 @@ from typing import List
 import pathspec
 from loguru import logger
 
-_IGNORE_DIRS = [".venv", ".pytest_cache"]
-
 
 def _find_gitignore_files(directory: str, exclude_dirs: List[str]) -> List[Path]:
     """
@@ -20,12 +18,11 @@ def _find_gitignore_files(directory: str, exclude_dirs: List[str]) -> List[Path]
         List[Path]: A list of paths to .gitignore files.
     """
     exclude_dirs = set(exclude_dirs or [])
-    gitignore_files = []
-    for path in Path(directory).rglob(".gitignore"):
-        # Exclude paths that contain any of the excluded directories
-        if not any(excluded in path.parts for excluded in exclude_dirs):
-            gitignore_files.append(path)
-    return gitignore_files
+    return [
+        path
+        for path in Path(directory).rglob(".gitignore")
+        if not any(excluded in path.parts for excluded in exclude_dirs)
+    ]
 
 
 def _read_patterns_from_file(file_path: Path) -> List[str]:
@@ -42,7 +39,7 @@ def _read_patterns_from_file(file_path: Path) -> List[str]:
         return f.read().splitlines()
 
 
-def load_gitignore_patterns(directory: str, exclude_dirs: List[str] | None = _IGNORE_DIRS) -> pathspec.PathSpec:
+def load_gitignore_patterns(directory: str, exclude_dirs: List[str]) -> pathspec.PathSpec:
     """
     Load .gitignore patterns from a directory, excluding specified directories.
 
