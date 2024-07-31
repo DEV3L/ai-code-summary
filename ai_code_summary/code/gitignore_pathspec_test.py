@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from spikes.code_extract.code.gitignore_pathspec import _find_gitignore_files, load_gitignore_patterns
+from ai_code_summary.code.gitignore_pathspec import _find_gitignore_files, load_gitignore_patterns
 
 
 @pytest.fixture

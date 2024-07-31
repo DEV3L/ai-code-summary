@@ -3,18 +3,17 @@ import time
 from loguru import logger
 from openai import OpenAI
 
+from ai_code_summary.env_variables import OPENAI_MODEL, SUMMARY_PROMPT
+
 client = OpenAI()
 
 
 def summarize_content(content: str) -> str:
     start_time = time.time()
     completion = client.chat.completions.create(
-        model="gpt-4o",
+        model=OPENAI_MODEL,
         messages=[
-            {
-                "role": "system",
-                "content": "You are code summary expert. You summarize code in a short way that is easy to understand.",
-            },
+            {"role": "system", "content": SUMMARY_PROMPT},
             {"role": "user", "content": f"Summarize the following code:\n\n{content}"},
         ],
     )

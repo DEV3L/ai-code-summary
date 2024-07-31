@@ -25,14 +25,13 @@ _CODE_EXTENSIONS = {
 
 def read_file(file_path: Path) -> Tuple[Path, str]:
     """
-    Reads the content of a file, ignoring decoding errors to ensure the process doesn't fail.
-    Logs the operation for traceability.
+    Reads the content of a file.
 
     Args:
         file_path (Path): The path to the file to be read.
 
     Returns:
-        Tuple[Path, str]: The file path and its content.
+        Tuple[Path, str]: A tuple containing the file path and its content as a string.
     """
     try:
         with file_path.open("rb") as f:
@@ -46,16 +45,16 @@ def read_file(file_path: Path) -> Tuple[Path, str]:
 
 def write_file(file_info: Tuple[Path, str], base_dir: Path, output_dir: Path) -> None:
     """
-    Writes content to a file in the output directory, maintaining the relative path structure.
-    Ensures the output directory structure mirrors the base directory structure.
+    Writes content to a file in the specified output directory.
 
     Args:
-        file_info (Tuple[Path, str]): The file path and its content.
-        base_dir (Path): The base directory to maintain relative paths.
+        file_info (Tuple[Path, str]): A tuple containing the file path and its content.
+        base_dir (Path): The base directory to calculate relative paths.
         output_dir (Path): The directory where the file will be written.
     """
     file_path, content = file_info
 
+    # Calculate the relative path to maintain directory structure
     relative_path = file_path.relative_to(base_dir)
     output_file = output_dir / relative_path.name
 
@@ -68,10 +67,9 @@ def write_file(file_info: Tuple[Path, str], base_dir: Path, output_dir: Path) ->
 def clear_tmp_folder(tmp_dir: Path) -> None:
     """
     Clears the contents of a temporary directory and recreates it.
-    Ensures a clean state for temporary operations.
 
     Args:
-        tmp_dir (Path): The temporary directory to be cleared and recreated.
+        tmp_dir (Path): The path to the temporary directory.
     """
     if tmp_dir.exists() and tmp_dir.is_dir():
         shutil.rmtree(tmp_dir)
@@ -81,18 +79,38 @@ def clear_tmp_folder(tmp_dir: Path) -> None:
 
 
 def get_code_files(directory: str, spec: pathspec.PathSpec) -> List[Path]:
+    """
+    Retrieves a list of code files in a directory, excluding those that match the given pathspec.
+
+    Args:
+        directory (str): The directory to search for code files.
+        spec (pathspec.PathSpec): The pathspec to filter out files.
+
+    Returns:
+        List[Path]: A list of paths to the code files.
+    """
     base_dir = Path(directory)
 
-    code_files = [
-        Path(root) / file
-        for root, _, files in os.walk(base_dir)
-        for file in files
-        if not spec.match_file((Path(root) / file).relative_to(base_dir)) and _is_code_file(Path(root) / file)
-    ]
-    
-    logger.info(f"Found {len(code_files)} code files in {directory}")
-    return code_files
+    # Recursively collect all files in the directory
+    all_files = [Path(root) / file for root, _, files in os.walk(base_dir) for file in files]
+
+    # Filter files to include only code files
+    code_files = [file for file in all_files if _is_code_file(file)]
+    # Further filter files based on the pathspec
+    filtered_files = [file for file in code_files if not spec.match_file(file.relative_to(base_dir))]
+
+    logger.info(f"Found {len(filtered_files)} code files in {directory}")
+    return filtered_files
 
 
 def _is_code_file(file: Path) -> bool:
+    """
+    Checks if a file is a code file based on its extension or name.
+
+    Args:
+        file (Path): The file to check.
+
+    Returns:
+        bool: True if the file is a code file, False otherwise.
+    """
     return file.suffix in _CODE_EXTENSIONS or file.name == "Dockerfile"
