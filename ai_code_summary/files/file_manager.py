@@ -8,18 +8,20 @@ from loguru import logger
 
 # Set of recognized code file extensions
 _CODE_EXTENSIONS = {
-    ".py",
-    ".js",
-    ".ts",
-    ".java",
-    ".cpp",
     ".c",
-    ".html",
-    ".css",
+    ".cpp",
     ".cs",
-    ".yml",
-    ".toml",
+    ".css",
     ".default",
+    ".html",
+    ".java",
+    ".js",
+    ".jsx",
+    ".py",
+    ".toml",
+    ".ts",
+    ".tsx",
+    ".yml",
     "Dockerfile",
 }
 
