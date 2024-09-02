@@ -54,10 +54,11 @@ def test_write_markdown(mock_file_contents):
     output_markdown_file_name = Path("./tmp/test_project.md")
 
     with patch("builtins.open", mock_open()) as mocked_file:
-        _write_markdown(base_dir, base_dir_name, output_markdown_file_name, mock_file_contents)
-        mocked_file.assert_called_with(output_markdown_file_name, "a")
-        handle = mocked_file()
-        handle.write.assert_any_call(f"# {base_dir_name}\n\n")
+        with patch("ai_code_summary.markdown.export.summarize_content", return_value="Summary of content"):
+            _write_markdown(base_dir, base_dir_name, output_markdown_file_name, mock_file_contents)
+            mocked_file.assert_called_with(output_markdown_file_name, "a")
+            handle = mocked_file()
+            handle.write.assert_any_call(f"# {base_dir_name}\n\n")
 
 
 def test_write_markdown_file(mock_file_contents):
