@@ -17,6 +17,7 @@ _CODE_EXTENSIONS = {
     ".java",
     ".js",
     ".jsx",
+    ".md",
     ".py",
     ".toml",
     ".ts",
