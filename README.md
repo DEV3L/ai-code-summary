@@ -1,5 +1,7 @@
 # AI Code Summary
 
+![AI Code Summary Banner](ai-code-summary.png)
+
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ai-code-summary)
 ![PyPI version](https://img.shields.io/pypi/v/ai-code-summary)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
