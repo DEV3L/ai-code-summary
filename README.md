@@ -86,14 +86,6 @@ For more details, visit the [PyPI project page](https://pypi.org/project/ai-code
    hatch shell
    ```
 
-4. **Install dependencies**:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   _Note: Dependencies are managed via `hatch` and specified in `pyproject.toml`._
-
 ## Usage Guide
 
 To generate a markdown summary of your code files:
@@ -101,17 +93,8 @@ To generate a markdown summary of your code files:
 1. **Ensure your OpenAI API key is set in the `.env` file**.
 2. **Run the following script**:
 
-   ```python
-   from ai_code_summary.markdown.export import create_markdown_from_code
-
-   if __name__ == "__main__":
-       create_markdown_from_code(".")
-   ```
-
-   Alternatively, you can run the end-to-end script provided:
-
    ```bash
-   python run_end_to_end.py
+   hatch run run_end_to_end.py
    ```
 
    This will generate a markdown file summarizing the code in the current directory.
