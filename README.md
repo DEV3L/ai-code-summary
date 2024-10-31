@@ -243,7 +243,6 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 ## Acknowledgments
 
-- **Justin Beall** - Creator and maintainer of the project.
 - **OpenAI** - For providing the GPT models used in code summarization.
 - **Community Contributors** - Thank you to all who have contributed through issues and pull requests.
 
